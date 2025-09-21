@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('timezone')->default('Asia/Tokyo');
+            $table->foreignId('current_team_id')->nullable()->constrained('teams')->nullOnDelete();
             $table->rememberToken();
             $table->timestamps();
         });
