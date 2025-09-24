@@ -119,8 +119,14 @@ class ContactController extends Controller
 
         $contact->update($request->validated());
 
-        // ステータス/期日の変更に応じてタスク整合（常に最新1件を維持）
-        $contact->ensureOnePendingFollowupTask();
+        // ステータス/期日の変更に応じてタスク整合
+        if ($contact->status === 'completed') {
+            // 連絡先が完了なら紐づく未完了フォロータスクは完了に統一
+            $contact->completePendingFollowupTasks();
+        } else {
+            // 未完了なら未完了フォロータスクを1件だけ最新に保つ
+            $contact->ensureOnePendingFollowupTask();
+        }
 
         return response()->json([
             'message' => '連絡先を更新しました。',

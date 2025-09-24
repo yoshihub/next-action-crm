@@ -51,13 +51,7 @@ class Deal extends BaseModel
         return $this->belongsTo(Contact::class);
     }
 
-    /**
-     * 活動ログ
-     */
-    public function activities()
-    {
-        return $this->hasMany(Activity::class);
-    }
+    // 活動ログ機能は廃止
 
     /**
      * タスク
@@ -75,24 +69,18 @@ class Deal extends BaseModel
         return $query->where('stage', $stage);
     }
 
-    /**
-     * ステージ移動時の処理
-     */
-    public function moveToStage($newStage, $newIndex = null)
+    /** ステージ移動（副作用を最小限に） */
+    public function moveToStage(string $newStage, ?int $newIndex = null): void
     {
         $this->stage = $newStage;
-
-        // won/lost遷移時は確度を固定
-        if ($newStage === 'won') {
-            $this->probability = 100;
-        } elseif ($newStage === 'lost') {
-            $this->probability = 0;
-        }
-
+        $this->probability = match ($newStage) {
+            'won' => 100,
+            'lost' => 0,
+            default => $this->probability,
+        };
         if ($newIndex !== null) {
             $this->order_index = $newIndex;
         }
-
         $this->save();
     }
 

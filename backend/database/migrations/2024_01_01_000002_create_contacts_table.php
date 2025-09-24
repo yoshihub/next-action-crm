@@ -21,7 +21,6 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
             $table->json('tags')->nullable();
-            $table->integer('score')->default(0);
             $table->enum('priority', ['low', 'normal', 'high'])->default('normal');
             $table->enum('status', ['pending', 'completed'])->default('pending');
             $table->text('note')->nullable();
