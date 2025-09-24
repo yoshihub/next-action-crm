@@ -44,29 +44,7 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return <>{children}</>;
 };
 
-// シンプルなテストページコンポーネント
-const TestPage: React.FC = () => (
-  <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-    <h1>Next Action CRM - テストページ</h1>
-    <p>RouterProviderが正常に動作しています。</p>
-    <div style={{ marginTop: '20px', padding: '10px', backgroundColor: '#e8f5e8', borderRadius: '5px' }}>
-      <h2>ステップ1: React ✅</h2>
-      <p>基本的なReactコンポーネントが正常に動作しています。</p>
-    </div>
-    <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#e8f4fd', borderRadius: '5px' }}>
-      <h2>ステップ2: QueryClient ✅</h2>
-      <p>React Queryが正常に動作しています。</p>
-    </div>
-    <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#d1ecf1', borderRadius: '5px' }}>
-      <h2>ステップ3: RouterProvider ✅</h2>
-      <p>ルーターが正常に動作しています。</p>
-    </div>
-    <div style={{ marginTop: '10px', padding: '10px', backgroundColor: '#fff3cd', borderRadius: '5px' }}>
-      <h2>ステップ4: ページコンポーネント 🔄</h2>
-      <p>ページコンポーネントを一時的に無効化してテスト中...</p>
-    </div>
-  </div>
-);
+// テストページは不要のため削除
 
 export const router = createBrowserRouter([
   {
@@ -114,14 +92,6 @@ export const router = createBrowserRouter([
     ),
   },
   // 活動ログページは削除
-  {
-    path: '/test',
-    element: (
-      <ProtectedRoute>
-        <div />
-      </ProtectedRoute>
-    ),
-  },
   {
     path: '*',
     element: <Navigate to="/inbox" replace />,

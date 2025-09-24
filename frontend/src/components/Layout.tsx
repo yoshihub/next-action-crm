@@ -7,7 +7,6 @@ import {
   UsersIcon as Users,
   TrendingUpIcon as TrendingUp,
   CheckSquareIcon as CheckSquare,
-  ActivityIcon as Activity,
   LogOutIcon as LogOut
 } from './icons/Icons';
 
