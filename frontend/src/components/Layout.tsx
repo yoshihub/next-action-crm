@@ -31,7 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex">
         {/* サイドバー */}
         <div className="hidden md:flex md:w-64 md:flex-col">
-          <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-white border-r border-gray-200">
+          <div className="flex flex-col h-screen sticky top-0 pt-5 overflow-y-auto bg-white border-r border-gray-200">
             <div className="flex items-center flex-shrink-0 px-4">
               <h1 className="text-xl font-bold text-gray-900">Next Action CRM</h1>
             </div>
