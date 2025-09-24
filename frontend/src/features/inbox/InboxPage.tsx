@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../../app/apiClient';
 import type { InboxResponse, Task } from '../../app/types';
 import { useAuth } from '../../app/auth/AuthProvider';
@@ -20,6 +20,7 @@ const fetchInbox = async (scope: string, assigneeId?: number) => {
 const InboxPage: React.FC = () => {
   const [scope, setScope] = useState<(typeof SCOPES)[number]['key']>('today');
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const { data, isLoading, error, refetch, isFetching } = useQuery<InboxResponse>({
     queryKey: ['inbox', scope, user?.id],
     queryFn: () => fetchInbox(scope, user?.id || undefined),
@@ -32,11 +33,17 @@ const InboxPage: React.FC = () => {
   const completeTask = async (taskId: number) => {
     await apiClient.post(`/inbox/${taskId}/complete`);
     await refetch();
+    // 関連データも同期
+    queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    queryClient.invalidateQueries({ queryKey: ['contacts'] });
   };
 
   const postponeTask = async (taskId: number, days: number) => {
     await apiClient.post(`/inbox/${taskId}/postpone`, { days });
     await refetch();
+    // 関連データも同期
+    queryClient.invalidateQueries({ queryKey: ['tasks'] });
+    queryClient.invalidateQueries({ queryKey: ['contacts'] });
   };
 
   return (

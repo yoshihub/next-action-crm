@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../app/auth/AuthProvider';
 import apiClient from '../../app/apiClient';
 import type { PaginatedResponse, Task } from '../../app/types';
@@ -23,6 +23,7 @@ const fetchTasks = async (params: TaskParams & { assignee_id?: number }) => {
 
 const TasksPage: React.FC = () => {
   const [params, setParams] = useState<TaskParams>({ ...defaultParams });
+  const queryClient = useQueryClient();
   const { user } = useAuth();
   const { data, isLoading, error, refetch, isFetching } = useQuery<PaginatedResponse<Task>>({
     queryKey: ['tasks', params, user?.id],
@@ -32,11 +33,15 @@ const TasksPage: React.FC = () => {
   const completeTask = async (id: number) => {
     await apiClient.post(`/tasks/${id}/complete`);
     await refetch();
+    // 受信箱側にも反映
+    queryClient.invalidateQueries({ queryKey: ['inbox'] });
   };
 
   const postponeTask = async (id: number, days: number) => {
     await apiClient.post(`/tasks/${id}/postpone`, { days });
     await refetch();
+    // 受信箱側にも反映
+    queryClient.invalidateQueries({ queryKey: ['inbox'] });
   };
 
   const total = data?.pagination.total ?? 0;
