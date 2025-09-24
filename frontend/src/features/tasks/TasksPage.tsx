@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '../../app/apiClient';
 import type { PaginatedResponse, Task } from '../../app/types';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
+// import { Input } from '../../components/ui/Input';
+import TaskDetailPanel from './TaskDetailPanel';
 
 interface TaskParams {
   page: number;
@@ -21,10 +22,9 @@ const fetchTasks = async (params: TaskParams) => {
 
 const TasksPage: React.FC = () => {
   const [params, setParams] = useState<TaskParams>({ ...defaultParams });
-  const { data, isLoading, error, refetch, isFetching } = useQuery({
+  const { data, isLoading, error, refetch, isFetching } = useQuery<PaginatedResponse<Task>>({
     queryKey: ['tasks', params],
     queryFn: () => fetchTasks(params),
-    keepPreviousData: true,
   });
 
   const completeTask = async (id: number) => {
@@ -44,6 +44,8 @@ const TasksPage: React.FC = () => {
   const gotoPage = (page: number) => setParams((p) => ({ ...p, page }));
 
   const rows = useMemo(() => data?.data ?? [], [data]);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 
   return (
     <div>
@@ -79,10 +81,10 @@ const TasksPage: React.FC = () => {
       ) : (
         <div className="space-y-2">
           {rows.length === 0 && <div className="text-gray-600">タスクはありません</div>}
-          {rows.map((t) => (
+          {rows.map((t: Task) => (
             <div key={t.id} className="flex items-center justify-between bg-white border rounded p-3">
               <div>
-                <div className="font-medium">{t.title}</div>
+                <button className="font-medium text-left hover:underline" onClick={() => { setSelectedTaskId(t.id); setDetailOpen(true); }}>{t.title}</button>
                 <div className="text-sm text-gray-500">
                   期限: {new Date(t.due_on).toLocaleDateString()} / 優先度: {t.priority}
                   {t.contact && (
@@ -108,6 +110,8 @@ const TasksPage: React.FC = () => {
           ))}
         </div>
       )}
+
+      <TaskDetailPanel open={detailOpen} taskId={selectedTaskId} onClose={() => { setDetailOpen(false); setSelectedTaskId(null); }} />
 
       <div className="mt-3 flex items-center justify-between">
         <div className="text-sm text-gray-600">全{total}件</div>

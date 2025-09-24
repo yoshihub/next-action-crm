@@ -6,6 +6,8 @@ import { useQuery } from '@tanstack/react-query';
 import apiClient from '../../app/apiClient';
 import type { Deal, DealsResponse } from '../../app/types';
 import { Button } from '../../components/ui/Button';
+import DealCreateModal from './DealCreateModal';
+import DealDetailPanel from './DealDetailPanel';
 
 const STAGES = ['lead', 'qualify', 'proposal', 'negotiation', 'won', 'lost'] as const;
 
@@ -62,7 +64,9 @@ const DealsBoard: React.FC = () => {
   const { data, isLoading, error, refetch } = useQuery({ queryKey: ['deals-board'], queryFn: fetchDeals });
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
   const [board, setBoard] = useState<BoardState>({});
-  // 作成UIは一旦削除
+  const [createOpen, setCreateOpen] = useState(false);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedDealId, setSelectedDealId] = useState<number | null>(null);
 
   React.useEffect(() => {
     if (data) {
@@ -146,6 +150,7 @@ const DealsBoard: React.FC = () => {
         <h1 className="text-2xl font-bold">商談パイプライン</h1>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => refetch()}>再取得</Button>
+          <Button onClick={() => setCreateOpen(true)}>新規作成</Button>
         </div>
       </div>
       <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
@@ -154,14 +159,25 @@ const DealsBoard: React.FC = () => {
             <Column key={s} stageId={s} title={STAGE_LABELS[s]}>
               <SortableContext items={idsByStage[s] ?? []} strategy={verticalListSortingStrategy}>
                 {(board[s] ?? []).map((deal) => (
-                  <SortableCard key={deal.id} deal={deal} />
+                  <div key={deal.id} onClick={() => { setSelectedDealId(deal.id); setDetailOpen(true); }}>
+                    <SortableCard deal={deal} />
+                  </div>
                 ))}
               </SortableContext>
             </Column>
           ))}
         </div>
       </DndContext>
-      {/* 作成モーダルは一旦削除 */}
+      <DealCreateModal
+        open={createOpen}
+        onClose={() => setCreateOpen(false)}
+        onCreated={async () => { setCreateOpen(false); await refetch(); }}
+      />
+      <DealDetailPanel
+        open={detailOpen}
+        dealId={selectedDealId}
+        onClose={() => { setDetailOpen(false); setSelectedDealId(null); }}
+      />
     </div>
   );
 };

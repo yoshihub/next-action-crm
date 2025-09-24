@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import apiClient from '../../app/apiClient';
 import type { InboxResponse, Task } from '../../app/types';
 import { Button } from '../../components/ui/Button';
+import TaskDetailPanel from '../tasks/TaskDetailPanel';
 
 const SCOPES = [
   { key: 'today', label: '今日' },
@@ -24,6 +25,8 @@ const InboxPage: React.FC = () => {
   });
 
   const tasks = useMemo(() => data?.data ?? [], [data]);
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
 
   const completeTask = async (taskId: number) => {
     await apiClient.post(`/inbox/${taskId}/complete`);
@@ -63,9 +66,9 @@ const InboxPage: React.FC = () => {
             <div className="text-gray-600">タスクはありません</div>
           )}
           {tasks.map((t: Task) => (
-            <div key={t.id} className="flex items-center justify-between bg-white border rounded p-3">
+              <div key={t.id} className="flex items-center justify-between bg-white border rounded p-3">
               <div>
-                <div className="font-medium">{t.title}</div>
+                  <button className="font-medium text-left hover:underline" onClick={() => { setSelectedTaskId(t.id); setDetailOpen(true); }}>{t.title}</button>
                 <div className="text-sm text-gray-500">
                   期限: {new Date(t.due_on).toLocaleDateString()} / 優先度: {t.priority}
                   {t.contact && (
@@ -85,6 +88,7 @@ const InboxPage: React.FC = () => {
           ))}
         </div>
       )}
+      <TaskDetailPanel open={detailOpen} taskId={selectedTaskId} onClose={() => { setDetailOpen(false); setSelectedTaskId(null); }} />
     </div>
   );
 };

@@ -54,10 +54,16 @@ class DealController extends Controller
     public function store(StoreDealRequest $request): JsonResponse
     {
         $data = $request->validated();
-        $data['order_index'] = Deal::getNextOrderIndex(
-            auth()->user()->current_team_id,
-            $data['stage'] ?? 'lead'
-        );
+        $user = $request->user();
+
+        // 所有者・チームを自動設定
+        $data['owner_id'] = $user->id;
+        $data['team_id'] = $user->current_team_id;
+
+        // ステージと並び順（ギャップ法）を設定
+        $stage = $data['stage'] ?? 'lead';
+        $data['stage'] = $stage;
+        $data['order_index'] = Deal::getNextOrderIndex($user->current_team_id, $stage);
 
         $deal = Deal::create($data);
 
