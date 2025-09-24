@@ -35,7 +35,6 @@ class ContactFactory extends Factory
                 ['VIP', '新規', '既存', 'ホットリード', 'コールドリード'],
                 $this->faker->numberBetween(1, 3)
             ),
-            'score' => $this->faker->numberBetween(0, 100),
             'priority' => $this->faker->randomElement(['low', 'normal', 'high']),
             'note' => $this->faker->optional()->paragraph(),
             'next_action_on' => $this->faker->optional()->dateTimeBetween('now', '+30 days'),
