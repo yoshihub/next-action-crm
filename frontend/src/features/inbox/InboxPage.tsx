@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '../../app/apiClient';
 import type { InboxResponse, Task } from '../../app/types';
+import { useAuth } from '../../app/auth/AuthProvider';
 import { Button } from '../../components/ui/Button';
 import TaskDetailPanel from '../tasks/TaskDetailPanel';
 
@@ -11,17 +12,17 @@ const SCOPES = [
   { key: 'this_week', label: '今週' },
 ] as const;
 
-const fetchInbox = async (scope: string) => {
-  const res = await apiClient.get<InboxResponse>('/inbox', { params: { scope } });
+const fetchInbox = async (scope: string, assigneeId?: number) => {
+  const res = await apiClient.get<InboxResponse>('/inbox', { params: { scope, assignee_id: assigneeId } });
   return res.data;
 };
 
 const InboxPage: React.FC = () => {
   const [scope, setScope] = useState<(typeof SCOPES)[number]['key']>('today');
-  const { data, isLoading, error, refetch, isFetching } = useQuery({
-    queryKey: ['inbox', scope],
-    queryFn: () => fetchInbox(scope),
-    keepPreviousData: true,
+  const { user } = useAuth();
+  const { data, isLoading, error, refetch, isFetching } = useQuery<InboxResponse>({
+    queryKey: ['inbox', scope, user?.id],
+    queryFn: () => fetchInbox(scope, user?.id || undefined),
   });
 
   const tasks = useMemo(() => data?.data ?? [], [data]);

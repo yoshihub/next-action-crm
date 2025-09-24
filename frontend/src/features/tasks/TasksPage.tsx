@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '../../app/auth/AuthProvider';
 import apiClient from '../../app/apiClient';
 import type { PaginatedResponse, Task } from '../../app/types';
 import { Button } from '../../components/ui/Button';
@@ -15,16 +16,17 @@ interface TaskParams {
 
 const defaultParams: TaskParams = { page: 1, per_page: 20, status: 'pending' };
 
-const fetchTasks = async (params: TaskParams) => {
+const fetchTasks = async (params: TaskParams & { assignee_id?: number }) => {
   const res = await apiClient.get<PaginatedResponse<Task>>('/tasks', { params });
   return res.data;
 };
 
 const TasksPage: React.FC = () => {
   const [params, setParams] = useState<TaskParams>({ ...defaultParams });
+  const { user } = useAuth();
   const { data, isLoading, error, refetch, isFetching } = useQuery<PaginatedResponse<Task>>({
-    queryKey: ['tasks', params],
-    queryFn: () => fetchTasks(params),
+    queryKey: ['tasks', params, user?.id],
+    queryFn: () => fetchTasks({ ...params, assignee_id: user?.id }),
   });
 
   const completeTask = async (id: number) => {
@@ -65,10 +67,10 @@ const TasksPage: React.FC = () => {
             value={params.priority ?? ''}
             onChange={(e) => setParams((p) => ({ ...p, page: 1, priority: (e.target.value || undefined) as TaskParams['priority'] }))}
           >
-            <option value="">すべての優先度</option>
-            <option value="high">高</option>
-            <option value="normal">中</option>
-            <option value="low">低</option>
+            <option value="">All priorities</option>
+            <option value="high">high</option>
+            <option value="normal">normal</option>
+            <option value="low">low</option>
           </select>
           <Button variant="secondary" onClick={() => refetch()} disabled={isFetching}>再取得</Button>
         </div>

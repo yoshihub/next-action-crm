@@ -83,6 +83,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tasks/{task}/complete', [TaskController::class, 'complete']);
     Route::post('/tasks/{task}/postpone', [TaskController::class, 'postpone']);
 
-    // 活動ログ
-    Route::apiResource('activities', ActivityController::class);
+    // 活動ログ（不要のため削除）
 });

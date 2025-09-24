@@ -1,8 +1,17 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import apiClient from '../../app/apiClient';
-import type { ApiResponse, Deal, PaginatedResponse, Task, Activity } from '../../app/types';
+import type { ApiResponse, Deal } from '../../app/types';
 import { Button } from '../../components/ui/Button';
+
+const STAGE_LABELS: Record<string, string> = {
+  lead: 'リード',
+  qualify: '見極め',
+  proposal: '提案',
+  negotiation: '交渉',
+  won: '受注',
+  lost: '失注',
+};
 
 interface DealDetailPanelProps {
   open: boolean;
@@ -15,15 +24,7 @@ const fetchDeal = async (id: number) => {
   return res.data.data;
 };
 
-const fetchTasksByDeal = async (id: number) => {
-  const res = await apiClient.get<PaginatedResponse<Task>>('/tasks', { params: { deal_id: id, page: 1, per_page: 20 } });
-  return res.data.data ?? [];
-};
 
-const fetchActivitiesByDeal = async (id: number) => {
-  const res = await apiClient.get<PaginatedResponse<Activity>>('/activities', { params: { deal_id: id, page: 1, per_page: 20 } });
-  return res.data.data ?? [];
-};
 
 const DealDetailPanel: React.FC<DealDetailPanelProps> = ({ open, dealId, onClose }) => {
   const enabled = open && !!dealId;
@@ -32,16 +33,7 @@ const DealDetailPanel: React.FC<DealDetailPanelProps> = ({ open, dealId, onClose
     queryFn: () => fetchDeal(dealId as number),
     enabled,
   });
-  const { data: tasks = [] } = useQuery({
-    queryKey: ['deal-tasks', dealId],
-    queryFn: () => fetchTasksByDeal(dealId as number),
-    enabled,
-  });
-  const { data: activities = [] } = useQuery({
-    queryKey: ['deal-activities', dealId],
-    queryFn: () => fetchActivitiesByDeal(dealId as number),
-    enabled,
-  });
+  // 商談詳細のタスク表示は不要のため削除
 
   if (!open) return null;
 
@@ -73,7 +65,7 @@ const DealDetailPanel: React.FC<DealDetailPanelProps> = ({ open, dealId, onClose
                 </div>
                 <div>
                   <div className="text-sm text-gray-500">ステージ</div>
-                  <div className="font-medium">{deal.stage}</div>
+                  <div className="font-medium">{STAGE_LABELS[deal.stage] ?? deal.stage}</div>
                 </div>
               </div>
 
@@ -104,42 +96,9 @@ const DealDetailPanel: React.FC<DealDetailPanelProps> = ({ open, dealId, onClose
                 </div>
               )}
 
-              <div>
-                <div className="text-sm text-gray-500 mb-2">タスク</div>
-                {tasks.length === 0 ? (
-                  <div className="text-sm text-gray-500">タスクはありません</div>
-                ) : (
-                  <ul className="space-y-2">
-                    {tasks.map((t) => (
-                      <li key={t.id} className="border rounded p-2">
-                        <div className="flex items-center justify-between">
-                          <div className="font-medium text-sm">{t.title}</div>
-                          <div className="text-xs text-gray-500">{t.due_on}</div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              {/* タスク表示は削除 */}
 
-              <div>
-                <div className="text-sm text-gray-500 mb-2">活動ログ</div>
-                {activities.length === 0 ? (
-                  <div className="text-sm text-gray-500">活動ログはありません</div>
-                ) : (
-                  <ul className="space-y-2">
-                    {activities.map((a) => (
-                      <li key={a.id} className="border rounded p-2">
-                        <div className="flex items-center justify-between">
-                          <div className="text-xs text-gray-500">{a.occurred_at}</div>
-                          <div className="text-xs text-gray-500">{a.type}</div>
-                        </div>
-                        <div className="text-sm whitespace-pre-wrap">{a.body}</div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+              {/* 活動ログ機能は削除 */}
             </>
           ) : (
             <div>データが見つかりませんでした</div>

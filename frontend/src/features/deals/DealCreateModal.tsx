@@ -128,11 +128,15 @@ const DealCreateModal: React.FC<DealCreateModalProps> = ({ open, onClose, onCrea
           <div>
             <label className="block text-sm font-medium mb-1">金額</label>
             <input
-              type="number"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={amount}
-              onChange={(e) => setAmount(Number(e.target.value))}
+              onChange={(e) => {
+                const onlyDigits = e.target.value.replace(/[^0-9]/g, '');
+                setAmount(Number(onlyDigits || '0'));
+              }}
               className="w-full border rounded px-3 py-2"
-              min={0}
             />
           </div>
 
@@ -165,4 +169,3 @@ const DealCreateModal: React.FC<DealCreateModalProps> = ({ open, onClose, onCrea
 };
 
 export default DealCreateModal;
-

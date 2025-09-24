@@ -20,7 +20,9 @@ class DealController extends Controller
         $stage = $request->get('stage');
 
         $query = Deal::with(['contact', 'owner'])
-            ->whereNull('archived_at');
+            ->whereNull('archived_at')
+            ->where('team_id', $request->user()->current_team_id)
+            ->where('owner_id', $request->user()->id);
 
         if ($stage) {
             $query->inStage($stage);

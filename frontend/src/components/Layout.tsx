@@ -24,7 +24,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     { name: '連絡先', href: '/contacts', icon: Users },
     { name: '商談', href: '/deals', icon: TrendingUp },
     { name: 'タスク', href: '/tasks', icon: CheckSquare },
-    { name: '活動ログ', href: '/activities', icon: Activity },
+    // 活動ログは不要のためメニューから削除
   ];
 
   return (

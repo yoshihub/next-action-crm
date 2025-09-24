@@ -76,9 +76,9 @@ const ContactForm: React.FC<Props> = ({ defaultValues, onSubmit, onCancel, submi
         <div>
           <label className="block text-sm font-medium text-gray-700">優先度</label>
           <select className="mt-1 border rounded w-full px-2 py-2" {...register('priority')}>
-            <option value="high">高</option>
-            <option value="normal">中</option>
-            <option value="low">低</option>
+            <option value="high">high</option>
+            <option value="normal">normal</option>
+            <option value="low">low</option>
           </select>
         </div>
       </div>

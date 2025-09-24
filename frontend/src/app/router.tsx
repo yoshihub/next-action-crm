@@ -5,7 +5,6 @@ import InboxPage from '../features/inbox/InboxPage';
 import ContactsPage from '../features/contacts/ContactsPage';
 import DealsBoard from '../features/deals/DealsBoard';
 import TasksPage from '../features/tasks/TasksPage';
-import ActivitiesList from '../features/activities/ActivitiesList';
 import Layout from '../components/Layout';
 import { useAuth } from './auth/AuthProvider';
 
@@ -114,14 +113,7 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
   },
-  {
-    path: '/activities',
-    element: (
-      <ProtectedRoute>
-        <ActivitiesList />
-      </ProtectedRoute>
-    ),
-  },
+  // 活動ログページは削除
   {
     path: '/test',
     element: (
