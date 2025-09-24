@@ -23,6 +23,7 @@ class ContactResource extends JsonResource
             'phone' => $this->phone,
             'tags' => $this->tags,
             'score' => $this->score,
+            'priority' => $this->priority,
             'note' => $this->note,
             'next_action_on' => $this->next_action_on?->format('Y-m-d'),
             'last_contacted_at' => $this->last_contacted_at?->format('Y-m-d H:i:s'),
@@ -35,4 +36,3 @@ class ContactResource extends JsonResource
         ];
     }
 }
-

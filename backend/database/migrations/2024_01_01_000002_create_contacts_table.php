@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->json('tags')->nullable();
             $table->integer('score')->default(0);
+            $table->enum('priority', ['low', 'normal', 'high'])->default('normal');
             $table->text('note')->nullable();
             $table->date('next_action_on')->nullable();
             $table->dateTime('last_contacted_at')->nullable();

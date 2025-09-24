@@ -3,8 +3,11 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Deal } from '../../app/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { apiClient } from '../../app/apiClient';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Badge } from '../../components/ui/Badge';
-import { DollarSignIcon as DollarSign, CalendarIcon as Calendar, UserIcon as User, TrendingUpIcon as TrendingUp } from '../../components/icons/Icons';
+import { DollarSignIcon as DollarSign, CalendarIcon as Calendar, UserIcon as User, TrendingUpIcon as TrendingUp, XIcon } from '../../components/icons/Icons';
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
 
@@ -41,6 +44,17 @@ const DealCard: React.FC<DealCardProps> = ({ deal }) => {
     return 'bg-red-100 text-red-800';
   };
 
+  const queryClient = useQueryClient();
+  const completeDealMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiClient.post(`/deals/${deal.id}/complete`);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['deals'] });
+    },
+  });
+
   return (
     <Card
       ref={setNodeRef}
@@ -49,8 +63,15 @@ const DealCard: React.FC<DealCardProps> = ({ deal }) => {
       {...listeners}
       className={`cursor-grab hover:shadow-md transition-shadow ${
         isDragging ? 'opacity-50' : ''
-      }`}
+      } relative`}
     >
+      <button
+        aria-label="完了"
+        className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
+        onClick={(e) => { e.stopPropagation(); completeDealMutation.mutate(); }}
+      >
+        <XIcon className="h-4 w-4" />
+      </button>
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-medium line-clamp-2">
           {deal.title}

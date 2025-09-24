@@ -97,6 +97,15 @@ class Deal extends BaseModel
     }
 
     /**
+     * 商談を完了（看板から非表示にする＝アーカイブ）
+     */
+    public function complete(): void
+    {
+        $this->archived_at = now();
+        $this->save();
+    }
+
+    /**
      * ギャップ法でorder_indexを採番
      */
     public static function getNextOrderIndex($teamId, $stage)

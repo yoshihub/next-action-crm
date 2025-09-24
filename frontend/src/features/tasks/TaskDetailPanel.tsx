@@ -71,9 +71,29 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ open, taskId, onClose
               </div>
 
               {task.contact && (
-                <div>
+                <div className="space-y-1">
                   <div className="text-sm text-gray-500">連絡先</div>
                   <div className="font-medium">{task.contact.name}</div>
+                  {(task.contact.phone || task.contact.email) && (
+                    <div className="mt-1 space-y-1 text-sm">
+                      {task.contact.phone && (
+                        <div>
+                          <span className="text-gray-500 mr-2">電話</span>
+                          <a href={`tel:${task.contact.phone}`} className="text-blue-600 hover:underline">
+                            {task.contact.phone}
+                          </a>
+                        </div>
+                      )}
+                      {task.contact.email && (
+                        <div>
+                          <span className="text-gray-500 mr-2">メール</span>
+                          <a href={`mailto:${task.contact.email}`} className="text-blue-600 hover:underline">
+                            {task.contact.email}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -98,4 +118,3 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ open, taskId, onClose
 };
 
 export default TaskDetailPanel;
-

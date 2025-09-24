@@ -19,7 +19,8 @@ class DealController extends Controller
     {
         $stage = $request->get('stage');
 
-        $query = Deal::with(['contact', 'owner']);
+        $query = Deal::with(['contact', 'owner'])
+            ->whereNull('archived_at');
 
         if ($stage) {
             $query->inStage($stage);
@@ -99,6 +100,19 @@ class DealController extends Controller
     }
 
     /**
+     * 商談を完了（アーカイブ）
+     */
+    public function complete(Deal $deal): JsonResponse
+    {
+        $deal->complete();
+
+        return response()->json([
+            'message' => '商談を完了しました。',
+            'data' => new DealResource($deal->load(['contact', 'owner'])),
+        ]);
+    }
+
+    /**
      * 商談を移動（D&D）
      */
     public function move(Deal $deal, MoveDealRequest $request): JsonResponse
@@ -109,12 +123,12 @@ class DealController extends Controller
         // ギャップ法でorder_indexを調整
         if ($toIndex === null) {
             $toIndex = Deal::getNextOrderIndex(
-                auth()->user()->current_team_id,
+                $request->user()->current_team_id,
                 $toStage
             );
         } else {
             // 既存のorder_indexを調整
-            Deal::where('team_id', auth()->user()->current_team_id)
+            Deal::where('team_id', $request->user()->current_team_id)
                 ->where('stage', $toStage)
                 ->where('order_index', '>=', $toIndex)
                 ->increment('order_index', 10);

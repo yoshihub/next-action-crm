@@ -25,11 +25,10 @@ class TaskFactory extends Factory
             'assignee_id' => User::factory(),
             'contact_id' => Contact::factory(),
             'deal_id' => Deal::factory(),
-            'title' => $this->faker->sentence(3),
+            'title' => \Faker\Factory::create('ja_JP')->realText(10),
             'priority' => $this->faker->randomElement(['low', 'normal', 'high']),
             'due_on' => $this->faker->dateTimeBetween('now', '+30 days'),
             'done_at' => $this->faker->optional()->dateTimeBetween('-30 days', 'now'),
         ];
     }
 }
-

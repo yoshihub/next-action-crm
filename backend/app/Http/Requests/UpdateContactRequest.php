@@ -29,7 +29,7 @@ class UpdateContactRequest extends FormRequest
             'phone' => 'nullable|string|max:20',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
-            'score' => 'integer|min:0|max:100',
+            'priority' => 'sometimes|in:low,normal,high',
             'note' => 'nullable|string',
             'next_action_on' => 'nullable|date|after_or_equal:today',
             'last_contacted_at' => 'nullable|date',
@@ -51,4 +51,3 @@ class UpdateContactRequest extends FormRequest
         ];
     }
 }
-

@@ -18,6 +18,7 @@ class ContactFactory extends Factory
      */
     public function definition(): array
     {
+        $fakerJa = \Faker\Factory::create('ja_JP');
         $type = $this->faker->randomElement(['person', 'company']);
 
         return [
@@ -25,8 +26,8 @@ class ContactFactory extends Factory
             'owner_id' => User::factory(),
             'type' => $type,
             'name' => $type === 'person'
-                ? $this->faker->name()
-                : $this->faker->company(),
+                ? $fakerJa->name()
+                : $fakerJa->company(),
             'company' => $type === 'person' ? $this->faker->optional()->company() : null,
             'email' => $this->faker->optional()->safeEmail(),
             'phone' => $this->faker->optional()->phoneNumber(),
@@ -35,10 +36,10 @@ class ContactFactory extends Factory
                 $this->faker->numberBetween(1, 3)
             ),
             'score' => $this->faker->numberBetween(0, 100),
+            'priority' => $this->faker->randomElement(['low', 'normal', 'high']),
             'note' => $this->faker->optional()->paragraph(),
             'next_action_on' => $this->faker->optional()->dateTimeBetween('now', '+30 days'),
             'last_contacted_at' => $this->faker->optional()->dateTimeBetween('-30 days', 'now'),
         ];
     }
 }
-

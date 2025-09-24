@@ -37,7 +37,7 @@ const columns: { key: keyof Contact | 'owner_name' | 'actions'; label: string; s
   { key: 'email', label: 'メール', sortable: true },
   { key: 'phone', label: '電話' },
   { key: 'next_action_on', label: '次回フォロー', sortable: true },
-  { key: 'score', label: 'スコア', sortable: true },
+  { key: 'priority', label: '優先度', sortable: false },
   { key: 'owner_name', label: '担当者' },
   { key: 'updated_at', label: '更新日', sortable: true },
   { key: 'actions', label: '', sortable: false },
@@ -45,10 +45,9 @@ const columns: { key: keyof Contact | 'owner_name' | 'actions'; label: string; s
 
 const ContactsPage: React.FC = () => {
   const [params, setParams] = useState<ContactsQueryParams>(() => ({ ...defaultParams }));
-  const { data, isLoading, error, refetch, isFetching } = useQuery({
+  const { data, isLoading, error, refetch, isFetching } = useQuery<PaginatedResponse<Contact>>({
     queryKey: ['contacts', params],
     queryFn: () => fetchContacts(params),
-    keepPreviousData: true,
   });
 
   const [keywordInput, setKeywordInput] = useState<string>('');
@@ -174,14 +173,14 @@ const ContactsPage: React.FC = () => {
                 <td className="px-3 py-3" colSpan={columns.length}>データがありません</td>
               </tr>
             ) : (
-              data!.data.map((c) => (
+              data!.data.map((c: Contact) => (
                 <tr key={c.id} className="border-t hover:bg-gray-50">
                   <td className="px-3 py-2">{c.name}</td>
                   <td className="px-3 py-2">{c.company ?? '-'}</td>
                   <td className="px-3 py-2">{c.email ?? '-'}</td>
                   <td className="px-3 py-2">{c.phone ?? '-'}</td>
                   <td className="px-3 py-2">{c.next_action_on ?? '-'}</td>
-                  <td className="px-3 py-2">{c.score}</td>
+                  <td className="px-3 py-2">{c.priority ?? '-'}</td>
                   <td className="px-3 py-2">{c.owner?.name ?? '-'}</td>
                   <td className="px-3 py-2">{new Date(c.updated_at).toLocaleString()}</td>
                   <td className="px-3 py-2 text-right">

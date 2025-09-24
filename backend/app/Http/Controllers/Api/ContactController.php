@@ -47,6 +47,7 @@ class ContactController extends Controller
             'email',
             'next_action_on',
             'score',
+            'priority',
             'created_at',
             'updated_at',
         ];
@@ -101,8 +102,8 @@ class ContactController extends Controller
         $data['owner_id'] = $request->user()->id;
         $contact = Contact::create($data);
 
-        // 次回フォロータスクを自動作成
-        $contact->createNextActionTask();
+        // 次回フォロータスクを自動作成（連絡先の優先度を反映）
+        $contact->createNextActionTask($data['priority'] ?? 'normal');
 
         return response()->json([
             'message' => '連絡先を作成しました。',
@@ -119,9 +120,9 @@ class ContactController extends Controller
 
         $contact->update($request->validated());
 
-        // next_action_onが変更された場合、タスクを自動作成
+        // next_action_onが変更された場合、タスクを自動作成（連絡先の優先度を反映）
         if ($oldNextActionOn !== $contact->next_action_on) {
-            $contact->createNextActionTask();
+            $contact->createNextActionTask($request->get('priority', 'normal'));
         }
 
         return response()->json([

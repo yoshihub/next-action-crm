@@ -18,6 +18,7 @@ class Contact extends BaseModel
         'phone',
         'tags',
         'score',
+        'priority',
         'note',
         'next_action_on',
         'last_contacted_at',
@@ -74,7 +75,7 @@ class Contact extends BaseModel
     /**
      * 次回フォロータスクを自動作成
      */
-    public function createNextActionTask()
+    public function createNextActionTask(string $priority = 'normal')
     {
         if (!$this->next_action_on) {
             return;
@@ -88,10 +89,11 @@ class Contact extends BaseModel
 
         if (!$existingTask) {
             $this->tasks()->create([
+                'team_id' => $this->team_id,
                 'assignee_id' => $this->owner_id,
                 'title' => '次回フォロー',
                 'due_on' => $this->next_action_on,
-                'priority' => 'normal',
+                'priority' => in_array($priority, ['low', 'normal', 'high'], true) ? $priority : 'normal',
             ]);
         }
     }

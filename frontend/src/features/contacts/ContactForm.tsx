@@ -13,7 +13,7 @@ const schema = z.object({
   email: z.string().email('有効なメールアドレス').optional().or(z.literal('')),
   phone: z.string().optional(),
   next_action_on: z.string().optional(),
-  score: z.coerce.number().min(0).max(100).default(0),
+  priority: z.enum(['low', 'normal', 'high']).default('normal'),
   note: z.string().optional(),
 });
 
@@ -36,7 +36,7 @@ const ContactForm: React.FC<Props> = ({ defaultValues, onSubmit, onCancel, submi
       email: defaultValues?.email ?? '',
       phone: defaultValues?.phone ?? '',
       next_action_on: defaultValues?.next_action_on ?? '',
-      score: (defaultValues?.score as number) ?? 0,
+      priority: 'normal',
       note: defaultValues?.note ?? '',
     },
   });
@@ -74,8 +74,12 @@ const ContactForm: React.FC<Props> = ({ defaultValues, onSubmit, onCancel, submi
           <Input type="date" {...register('next_action_on')} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">スコア</label>
-          <Input type="number" min={0} max={100} {...register('score', { valueAsNumber: true })} />
+          <label className="block text-sm font-medium text-gray-700">優先度</label>
+          <select className="mt-1 border rounded w-full px-2 py-2" {...register('priority')}>
+            <option value="high">高</option>
+            <option value="normal">中</option>
+            <option value="low">低</option>
+          </select>
         </div>
       </div>
       <div>

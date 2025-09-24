@@ -76,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // 商談
     Route::apiResource('deals', DealController::class);
     Route::post('/deals/{deal}/move', [DealController::class, 'move']);
+    Route::post('/deals/{deal}/complete', [DealController::class, 'complete']);
 
     // タスク
     Route::apiResource('tasks', TaskController::class);

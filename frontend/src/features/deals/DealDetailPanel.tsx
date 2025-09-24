@@ -78,9 +78,29 @@ const DealDetailPanel: React.FC<DealDetailPanelProps> = ({ open, dealId, onClose
               </div>
 
               {deal.contact && (
-                <div>
+                <div className="space-y-1">
                   <div className="text-sm text-gray-500">連絡先</div>
                   <div className="font-medium">{deal.contact.name}</div>
+                  {(deal.contact.phone || deal.contact.email) && (
+                    <div className="mt-1 space-y-1 text-sm">
+                      {deal.contact.phone && (
+                        <div>
+                          <span className="text-gray-500 mr-2">電話</span>
+                          <a href={`tel:${deal.contact.phone}`} className="text-blue-600 hover:underline">
+                            {deal.contact.phone}
+                          </a>
+                        </div>
+                      )}
+                      {deal.contact.email && (
+                        <div>
+                          <span className="text-gray-500 mr-2">メール</span>
+                          <a href={`mailto:${deal.contact.email}`} className="text-blue-600 hover:underline">
+                            {deal.contact.email}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -135,4 +155,3 @@ const DealDetailPanel: React.FC<DealDetailPanelProps> = ({ open, dealId, onClose
 };
 
 export default DealDetailPanel;
-

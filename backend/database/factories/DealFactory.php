@@ -21,18 +21,19 @@ class DealFactory extends Factory
     {
         $stage = $this->faker->randomElement(['lead', 'qualify', 'proposal', 'negotiation', 'won', 'lost']);
 
+        $fakerJa = \Faker\Factory::create('ja_JP');
+
         return [
             'team_id' => Team::factory(),
             'owner_id' => User::factory(),
             'contact_id' => Contact::factory(),
-            'title' => $this->faker->sentence(3),
+            'title' => $fakerJa->realText(10),
             'amount' => $this->faker->numberBetween(10000, 10000000),
             'stage' => $stage,
             'probability' => $this->faker->numberBetween(0, 100),
             'expected_close_on' => $this->faker->optional()->dateTimeBetween('now', '+90 days'),
             'order_index' => $this->faker->numberBetween(10, 1000),
-            'lost_reason' => $stage === 'lost' ? $this->faker->sentence() : null,
+            'lost_reason' => $stage === 'lost' ? $fakerJa->realText(15) : null,
         ];
     }
 }
-

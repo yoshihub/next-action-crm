@@ -17,6 +17,7 @@ export interface Contact {
   phone?: string;
   tags?: string[];
   score: number;
+  priority?: 'low' | 'normal' | 'high';
   note?: string;
   next_action_on?: string;
   last_contacted_at?: string;
@@ -95,4 +96,3 @@ export interface InboxResponse {
 export interface DealsResponse {
   data: Record<string, Deal[]>;
 }
-

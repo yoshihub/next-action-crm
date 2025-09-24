@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import apiClient from '../../app/apiClient';
 import type { Deal, DealsResponse } from '../../app/types';
 import { Button } from '../../components/ui/Button';
+import { XIcon } from '../../components/icons/Icons';
 import DealCreateModal from './DealCreateModal';
 import DealDetailPanel from './DealDetailPanel';
 
@@ -41,7 +42,7 @@ const Column: React.FC<{ stageId: string; title: string; children: React.ReactNo
   );
 };
 
-const SortableCard: React.FC<{ deal: Deal }> = ({ deal }) => {
+const SortableCard: React.FC<{ deal: Deal; onComplete: (id: number) => void }> = ({ deal, onComplete }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: String(deal.id) });
   const style: React.CSSProperties = {
     transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
@@ -50,8 +51,15 @@ const SortableCard: React.FC<{ deal: Deal }> = ({ deal }) => {
     cursor: 'grab',
   };
   return (
-    <div ref={setNodeRef} style={style} className="bg-white rounded shadow p-2 mb-2 border" {...attributes} {...listeners}>
-      <div className="font-medium">{deal.title}</div>
+    <div ref={setNodeRef} style={style} className="bg-white rounded shadow p-2 mb-2 border relative" {...attributes} {...listeners}>
+      <button
+        aria-label="完了"
+        className="absolute top-1 right-1 text-gray-400 hover:text-gray-600"
+        onClick={(e) => { e.stopPropagation(); onComplete(deal.id); }}
+      >
+        <XIcon className="h-4 w-4" />
+      </button>
+      <div className="font-medium pr-5">{deal.title}</div>
       <div className="text-sm text-gray-500">¥{deal.amount.toLocaleString()}</div>
       {deal.contact && (
         <div className="text-xs text-gray-400 mt-1">{deal.contact.name}</div>
@@ -92,6 +100,15 @@ const DealsBoard: React.FC = () => {
 
   const moveApi = async (id: number, to_stage: Stage, to_index: number) => {
     await apiClient.post(`/deals/${id}/move`, { to_stage, to_index });
+  };
+
+  const completeApi = async (id: number) => {
+    await apiClient.post(`/deals/${id}/complete`);
+  };
+
+  const handleComplete = async (id: number) => {
+    await completeApi(id);
+    await refetch();
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -160,7 +177,7 @@ const DealsBoard: React.FC = () => {
               <SortableContext items={idsByStage[s] ?? []} strategy={verticalListSortingStrategy}>
                 {(board[s] ?? []).map((deal) => (
                   <div key={deal.id} onClick={() => { setSelectedDealId(deal.id); setDetailOpen(true); }}>
-                    <SortableCard deal={deal} />
+                    <SortableCard deal={deal} onComplete={handleComplete} />
                   </div>
                 ))}
               </SortableContext>

@@ -32,16 +32,16 @@ class DatabaseSeeder extends Seeder
 
         $user->update(['current_team_id' => $team->id]);
 
-        // チームメンバーを作成
+        // チームメンバーを作成（日本語名）
         $member = User::factory()->create([
-            'name' => 'メンバー',
+            'name' => '田中 太郎',
             'email' => 'member@example.com',
             'timezone' => 'Asia/Tokyo',
         ]);
         $member->update(['current_team_id' => $team->id]);
         $team->users()->attach($member->id, ['role' => 'member']);
 
-        // 連絡先を作成
+        // 連絡先を作成（日本語データ + 優先度）
         Contact::factory(20)->create([
             'team_id' => $team->id,
         ])->each(function ($contact) use ($team, $user) {
@@ -51,6 +51,8 @@ class DatabaseSeeder extends Seeder
                     'next_action_on' => now()->addDays(rand(1, 7)),
                 ]);
             }
+            // 優先度に応じた次回フォロータスクを作成
+            $contact->createNextActionTask($contact->priority ?? 'normal');
         });
 
         // 商談を作成
