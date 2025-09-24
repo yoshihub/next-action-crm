@@ -57,23 +57,45 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ open, taskId, onClose
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                {task.assignee && (
-                  <div>
-                    <div className="text-sm text-gray-500">担当者</div>
-                    <div className="font-medium">{task.assignee.name}</div>
-                  </div>
-                )}
-                <div>
-                  <div className="text-sm text-gray-500">ステータス</div>
-                  <div className="font-medium">{task.is_completed ? '完了' : '未完了'}</div>
-                </div>
+              <div>
+                <div className="text-sm text-gray-500">ステータス</div>
+                <div className="font-medium">{task.is_completed ? '完了' : '未完了'}</div>
               </div>
 
               {task.contact && (
-                <div className="space-y-1">
-                  <div className="text-sm text-gray-500">連絡先</div>
-                  <div className="font-medium">{task.contact.name}</div>
+                <div className="space-y-2">
+                  <div>
+                    <div className="text-sm text-gray-500">連絡先</div>
+                    <div className="font-medium">{task.contact.name}</div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    {task.contact.company && (
+                      <div>
+                        <div className="text-gray-500">会社</div>
+                        <div className="font-medium">{task.contact.company}</div>
+                      </div>
+                    )}
+                    {task.contact.type && (
+                      <div>
+                        <div className="text-gray-500">種別</div>
+                        <div className="font-medium">{task.contact.type === 'person' ? '個人' : '企業'}</div>
+                      </div>
+                    )}
+                    {task.contact.priority && (
+                      <div>
+                        <div className="text-gray-500">優先度</div>
+                        <div className="font-medium">{task.contact.priority}</div>
+                      </div>
+                    )}
+                    {task.contact.next_action_on && (
+                      <div>
+                        <div className="text-gray-500">次回フォロー日</div>
+                        <div className="font-medium">{task.contact.next_action_on}</div>
+                      </div>
+                    )}
+                  </div>
+
                   {(task.contact.phone || task.contact.email) && (
                     <div className="mt-1 space-y-1 text-sm">
                       {task.contact.phone && (
@@ -92,6 +114,13 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ open, taskId, onClose
                           </a>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {task.contact.note && (
+                    <div>
+                      <div className="text-sm text-gray-500">メモ</div>
+                      <div className="text-sm whitespace-pre-wrap">{task.contact.note}</div>
                     </div>
                   )}
                 </div>

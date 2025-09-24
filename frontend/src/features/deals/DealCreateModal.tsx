@@ -21,7 +21,7 @@ const DealCreateModal: React.FC<DealCreateModalProps> = ({ open, onClose, onCrea
   const [keyword, setKeyword] = useState('');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [title, setTitle] = useState('');
-  const [amount, setAmount] = useState<number>(0);
+  const [amountText, setAmountText] = useState<string>("");
   const [stage, setStage] = useState<'lead' | 'qualify' | 'proposal' | 'negotiation' | 'won' | 'lost'>('lead');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ const DealCreateModal: React.FC<DealCreateModalProps> = ({ open, onClose, onCrea
       setKeyword('');
       setSelectedContact(null);
       setTitle('');
-      setAmount(0);
+      setAmountText("");
       setStage('lead');
       setError(null);
     }
@@ -59,7 +59,7 @@ const DealCreateModal: React.FC<DealCreateModalProps> = ({ open, onClose, onCrea
       const res = await apiClient.post('/deals', {
         contact_id: selectedContact.id,
         title: title.trim(),
-        amount: Number(amount) || 0,
+        amount: Number(amountText || '0') || 0,
         stage,
       });
       const deal = (res.data?.data ?? res.data) as Deal;
@@ -131,10 +131,10 @@ const DealCreateModal: React.FC<DealCreateModalProps> = ({ open, onClose, onCrea
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              value={amount}
+              value={amountText}
               onChange={(e) => {
                 const onlyDigits = e.target.value.replace(/[^0-9]/g, '');
-                setAmount(Number(onlyDigits || '0'));
+                setAmountText(onlyDigits);
               }}
               className="w-full border rounded px-3 py-2"
             />

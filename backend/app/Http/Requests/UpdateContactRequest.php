@@ -30,6 +30,7 @@ class UpdateContactRequest extends FormRequest
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
             'priority' => 'sometimes|in:low,normal,high',
+            'status' => 'sometimes|in:pending,completed',
             'note' => 'nullable|string',
             'next_action_on' => 'nullable|date|after_or_equal:today',
             'last_contacted_at' => 'nullable|date',

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreContactRequest extends FormRequest
 {
@@ -21,16 +22,24 @@ class StoreContactRequest extends FormRequest
      */
     public function rules(): array
     {
+        $teamId = $this->user()?->current_team_id;
+
         return [
             'type' => 'required|in:person,company',
             'name' => 'required|string|max:255',
             'company' => 'nullable|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => [
+                'nullable',
+                'email',
+                'max:255',
+                Rule::unique('contacts', 'email')->where(fn($q) => $q->where('team_id', $teamId)),
+            ],
             'phone' => 'nullable|string|max:20',
             'tags' => 'nullable|array',
             'tags.*' => 'string|max:50',
             // UI変更: スコア入力を廃止し、優先度を連絡先作成時に受け取る
             'priority' => 'required|in:low,normal,high',
+            'status' => 'in:pending,completed',
             'note' => 'nullable|string',
             'next_action_on' => 'nullable|date|after_or_equal:today',
             'last_contacted_at' => 'nullable|date',
@@ -50,6 +59,7 @@ class StoreContactRequest extends FormRequest
             'name.required' => '名前は必須です。',
             'name.max' => '名前は255文字以内で入力してください。',
             'email.email' => '有効なメールアドレスを入力してください。',
+            'email.unique' => '同じメールアドレスの連絡先が既に存在します。',
             'next_action_on.after_or_equal' => '次回アクション日は今日以降の日付を選択してください。',
         ];
     }

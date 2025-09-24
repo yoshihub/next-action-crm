@@ -21,6 +21,11 @@ class InboxController extends Controller
         $query = Task::with(['assignee', 'contact', 'deal'])
             ->pending();
 
+        // 連絡先のステータスが未完了のみ
+        $query->whereHas('contact', function ($q) {
+            $q->where('status', 'pending');
+        });
+
         // 担当者でフィルタ
         if ($assigneeId) {
             $query->where('assignee_id', $assigneeId);
@@ -56,6 +61,11 @@ class InboxController extends Controller
     public function complete(Task $task): JsonResponse
     {
         $task->complete();
+        if ($task->contact) {
+            $task->contact->status = 'completed';
+            $task->contact->save();
+            $task->contact->completePendingFollowupTasks();
+        }
 
         return response()->json([
             'message' => 'タスクを完了にしました。',
@@ -71,10 +81,16 @@ class InboxController extends Controller
         $days = $request->get('days', 1);
         $task->postpone($days);
 
+        // タスクの期日変更を連絡先にも同期
+        if ($task->contact) {
+            $task->contact->status = 'pending';
+            $task->contact->next_action_on = $task->due_on;
+            $task->contact->save();
+        }
+
         return response()->json([
             'message' => "タスクを{$days}日延期しました。",
             'data' => new TaskResource($task->load(['assignee', 'contact', 'deal'])),
         ]);
     }
 }
-

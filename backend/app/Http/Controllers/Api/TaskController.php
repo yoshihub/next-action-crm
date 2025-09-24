@@ -128,6 +128,13 @@ class TaskController extends Controller
     public function complete(Task $task): JsonResponse
     {
         $task->complete();
+        // 紐づく連絡先のステータスも完了へ
+        if ($task->contact) {
+            $task->contact->status = 'completed';
+            $task->contact->save();
+            // 未完了の重複フォロータスクがあれば完了させる（整合）
+            $task->contact->completePendingFollowupTasks();
+        }
 
         return response()->json([
             'message' => 'タスクを完了にしました。',
@@ -147,10 +154,16 @@ class TaskController extends Controller
         $days = $request->get('days', 1);
         $task->postpone($days);
 
+        // タスクの期日変更を連絡先にも同期
+        if ($task->contact) {
+            $task->contact->status = 'pending';
+            $task->contact->next_action_on = $task->due_on;
+            $task->contact->save();
+        }
+
         return response()->json([
             'message' => "タスクを{$days}日延期しました。",
             'data' => new TaskResource($task->load(['assignee', 'contact', 'deal'])),
         ]);
     }
 }
-

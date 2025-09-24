@@ -119,10 +119,8 @@ class ContactController extends Controller
 
         $contact->update($request->validated());
 
-        // next_action_onが変更された場合、タスクを自動作成（連絡先の優先度を反映）
-        if ($oldNextActionOn !== $contact->next_action_on) {
-            $contact->createNextActionTask($request->get('priority', 'normal'));
-        }
+        // ステータス/期日の変更に応じてタスク整合（常に最新1件を維持）
+        $contact->ensureOnePendingFollowupTask();
 
         return response()->json([
             'message' => '連絡先を更新しました。',

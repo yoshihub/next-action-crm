@@ -14,6 +14,7 @@ const schema = z.object({
   phone: z.string().optional(),
   next_action_on: z.string().optional(),
   priority: z.enum(['low', 'normal', 'high']).default('normal'),
+  status: z.enum(['pending', 'completed']).default('pending'),
   note: z.string().optional(),
 });
 
@@ -37,6 +38,7 @@ const ContactForm: React.FC<Props> = ({ defaultValues, onSubmit, onCancel, submi
       phone: defaultValues?.phone ?? '',
       next_action_on: defaultValues?.next_action_on ?? '',
       priority: 'normal',
+      status: (defaultValues?.status as 'pending' | 'completed') ?? 'pending',
       note: defaultValues?.note ?? '',
     },
   });
@@ -79,6 +81,13 @@ const ContactForm: React.FC<Props> = ({ defaultValues, onSubmit, onCancel, submi
             <option value="high">high</option>
             <option value="normal">normal</option>
             <option value="low">low</option>
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">ステータス</label>
+          <select className="mt-1 border rounded w-full px-2 py-2" {...register('status')}>
+            <option value="pending">未完了</option>
+            <option value="completed">完了</option>
           </select>
         </div>
       </div>

@@ -18,6 +18,7 @@ export interface Contact {
   tags?: string[];
   // score は廃止（互換のため型からも削除）
   priority?: 'low' | 'normal' | 'high';
+  status?: 'pending' | 'completed';
   note?: string;
   next_action_on?: string;
   last_contacted_at?: string;
