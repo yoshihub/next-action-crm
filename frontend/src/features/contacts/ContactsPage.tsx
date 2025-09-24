@@ -37,7 +37,7 @@ const columns: { key: keyof Contact | 'owner_name' | 'actions'; label: string; s
   { key: 'email', label: 'メール', sortable: true },
   { key: 'phone', label: '電話' },
   { key: 'next_action_on', label: '次回フォロー', sortable: true },
-  { key: 'priority', label: '優先度', sortable: false },
+  { key: 'priority', label: '優先度', sortable: true },
   { key: 'owner_name', label: '担当者' },
   { key: 'updated_at', label: '更新日', sortable: true },
   { key: 'actions', label: '', sortable: false },

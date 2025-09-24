@@ -44,7 +44,7 @@ class DealController extends Controller
      */
     public function show(Deal $deal): JsonResponse
     {
-        $deal->load(['contact', 'owner', 'activities', 'tasks']);
+        $deal->load(['contact', 'owner']);
 
         return response()->json([
             'data' => new DealResource($deal),

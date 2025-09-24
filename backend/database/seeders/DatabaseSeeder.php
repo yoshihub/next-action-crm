@@ -7,7 +7,7 @@ use App\Models\Team;
 use App\Models\Contact;
 use App\Models\Deal;
 use App\Models\Task;
-use App\Models\Activity;
+// 活動ログは廃止
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -84,9 +84,6 @@ class DatabaseSeeder extends Seeder
             'done_at' => null,
         ]);
 
-        // 活動ログを作成
-        Activity::factory(30)->create([
-            'team_id' => $team->id,
-        ]);
+        // 活動ログ生成は削除
     }
 }

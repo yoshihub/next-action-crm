@@ -16,7 +16,7 @@ export interface Contact {
   email?: string;
   phone?: string;
   tags?: string[];
-  score: number;
+  // score は廃止（互換のため型からも削除）
   priority?: 'low' | 'normal' | 'high';
   note?: string;
   next_action_on?: string;

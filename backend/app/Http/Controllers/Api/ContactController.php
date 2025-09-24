@@ -46,7 +46,6 @@ class ContactController extends Controller
             'company',
             'email',
             'next_action_on',
-            'score',
             'priority',
             'created_at',
             'updated_at',
